@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from typing import Optional
 
-from pydantic import AnyHttpUrl, ConfigDict
-from pydantic_settings import BaseSettings
+from pydantic import AnyHttpUrl
+
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -27,7 +28,7 @@ class Settings(BaseSettings):
     # optional MCP auth
     CAUSEPILOT_MCP_API_KEY: str | None = None
 
-    model_config = ConfigDict(env_file=".env", env_file_encoding="utf-8")
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
 
 settings = Settings()

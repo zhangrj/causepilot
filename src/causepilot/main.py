@@ -27,3 +27,11 @@ def diagnose(req: dict):
 
 if __name__ == "__main__":
     uvicorn.run("causepilot.main:app", host="0.0.0.0", port=8000, reload=False)
+
+
+def main() -> None:
+    """Console entrypoint for `uv run causepilot`.
+
+    Starts the FastAPI app with uvicorn. Kept minimal for Phase 1.
+    """
+    uvicorn.run("causepilot.main:app", host="0.0.0.0", port=8000, reload=False)
