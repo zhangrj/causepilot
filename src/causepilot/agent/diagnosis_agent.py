@@ -67,30 +67,29 @@ class DiagnosisAgent:
             },
         }
 
-        # 1) Try pydantic_ai.run
-        try:
-            if hasattr(pydantic_ai, "run"):
-                result = pydantic_ai.run(**run_kwargs)
-                if isinstance(result, DiagnosisResult):
-                    return result
-                if isinstance(result, dict):
-                    return DiagnosisResult(**result)
-        except Exception as exc:
-            logger.exception("pydantic_ai.run failed: %s", exc)
-
-        # 2) Try Agent-style invocation
         try:
             AgentCls = getattr(pydantic_ai, "Agent", None) or getattr(pydantic_ai, "PydanticAIAgent", None)
-            if AgentCls:
-                agent = AgentCls(provider=settings.CAUSEPILOT_LLM_PROVIDER, model=settings.CAUSEPILOT_LLM_MODEL, api_key=settings.CAUSEPILOT_LLM_API_KEY, api_secret=settings.CAUSEPILOT_LLM_API_SECRET, endpoint=settings.CAUSEPILOT_LLM_ENDPOINT)
-                if hasattr(agent, "invoke"):
-                    out = agent.invoke(context, output_model=DiagnosisResult)
-                    if isinstance(out, DiagnosisResult):
-                        return out
-                    if isinstance(out, dict):
-                        return DiagnosisResult(**out)
+            if not AgentCls:
+                raise RuntimeError("pydantic_ai does not expose an Agent class")
+
+            agent = AgentCls(
+                provider=settings.CAUSEPILOT_LLM_PROVIDER,
+                model=settings.CAUSEPILOT_LLM_MODEL,
+                api_key=settings.CAUSEPILOT_LLM_API_KEY,
+                api_secret=settings.CAUSEPILOT_LLM_API_SECRET,
+                endpoint=settings.CAUSEPILOT_LLM_ENDPOINT,
+            )
+
+            if not hasattr(agent, "invoke"):
+                raise RuntimeError("pydantic_ai Agent does not implement invoke()")
+
+            out = agent.invoke(context, output_model=DiagnosisResult)
+            if isinstance(out, DiagnosisResult):
+                return out
+            if isinstance(out, dict):
+                return DiagnosisResult(**out)
+
         except Exception as exc:
             logger.exception("pydantic_ai Agent invocation failed: %s", exc)
 
-        # Strict: must return a structured result via PydanticAI
-        raise RuntimeError("pydantic_ai invocation did not return a DiagnosisResult or usable dict")
+        raise RuntimeError("pydantic_ai Agent invocation did not return a DiagnosisResult or usable dict")

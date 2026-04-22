@@ -2,10 +2,12 @@ from causepilot.services.diagnosis_service import DiagnosisService
 
 
 def test_diagnose_minimal(monkeypatch):
-    # Prepare a fake pydantic_ai runtime that returns a DiagnosisResult-shaped dict
-    class FakePydanticAI:
-        @staticmethod
-        def run(schema=None, input=None, config=None):
+    # Prepare a fake pydantic_ai.Agent implementation that returns a DiagnosisResult-shaped dict
+    class FakeAgent:
+        def __init__(self, **kwargs):
+            pass
+
+        def invoke(self, context, output_model=None):
             return {
                 "incident_type": "latency_spike",
                 "summary": "fake summary",
@@ -17,10 +19,12 @@ def test_diagnose_minimal(monkeypatch):
                 "recommended_action": ["check downstream"]
             }
 
+    import types
     import causepilot.agent.diagnosis_agent as da
 
+    fake = types.SimpleNamespace(Agent=FakeAgent)
     # inject fake runtime and mark available before creating service
-    monkeypatch.setattr(da, "pydantic_ai", FakePydanticAI)
+    monkeypatch.setattr(da, "pydantic_ai", fake)
     monkeypatch.setattr(da, "PydanticAI_AVAILABLE", True)
 
     service = DiagnosisService()
