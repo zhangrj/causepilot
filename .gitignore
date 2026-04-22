@@ -1,0 +1,25 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# configuration file
+.env
+
+# vscode settings
+.vscode
+
+# Dockerfile
+Dockerfile.local
+
+# pytest
+.pytest_cache
+
+# Documentation
+开发文档.md
