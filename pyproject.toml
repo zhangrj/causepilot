@@ -7,7 +7,27 @@ authors = [
     { name = "rongjie.zhang", email = "rongjie.zhang@shell.com" }
 ]
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "fastapi>=0.136.0",
+    "httpx>=0.28.1",
+    "openai>=2.32.0",
+    "pydantic>=2.13.3",
+    "pydantic-ai>=1.85.1",
+    "pydantic-settings>=2.14.0",
+    "pytest>=9.0.3",
+    "python-dotenv>=1.2.2",
+    "uvicorn>=0.45.0",
+]
+
+[[tool.uv.index]]
+name = "tuna"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple/"
+default = true
+
+[project.optional-dependencies]
+testing = [
+    "pytest",
+]
 
 [project.scripts]
 causepilot = "causepilot:main"
