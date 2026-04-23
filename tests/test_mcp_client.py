@@ -16,6 +16,6 @@ def test_mcp_client_call_tool(monkeypatch):
             return fake_post(url, json)
 
     client = MCPClient(base_url="http://localhost:8080")
-    client._client = FakeClient()
+    client._client = FakeClient()  # type: ignore[assignment]
     res = client.call_tool("metrics_query", {"metric": "m"})
     assert res.get('summary') == 'ok'

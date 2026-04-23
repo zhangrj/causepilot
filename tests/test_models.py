@@ -9,8 +9,8 @@ def test_alert_event_validation():
         "severity": "critical",
         "service": "checkout-service",
         "environment": "prod",
-        "window_start": "2026-04-20T08:00:00Z",
-        "window_end": "2026-04-20T08:15:00Z",
+        "window_start": datetime.fromisoformat("2026-04-20T08:00:00+00:00"),
+        "window_end": datetime.fromisoformat("2026-04-20T08:15:00+00:00"),
     }
     alert = AlertEvent(**data)
     assert alert.title.startswith("checkout-service")

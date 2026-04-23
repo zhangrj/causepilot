@@ -1,14 +1,16 @@
 from causepilot.services.diagnosis_service import DiagnosisService
+from typing import cast
+from causepilot.mcp.client import MCPClient
 
 
 def test_diagnose_minimal(monkeypatch):
     # Prepare a fake pydantic_ai.Agent implementation that returns a DiagnosisResult-shaped dict
     class FakeAgent:
-        def __init__(self, **kwargs):
+        def __init__(self, *args, **kwargs):
             pass
-
-        def invoke(self, context, output_model=None):
-            return {
+        def run_sync(self, prompt: str):
+            # mirror pydantic_ai.Agent.run_sync behaviour: return object with `output` attribute
+            data = {
                 "incident_type": "latency_spike",
                 "summary": "fake summary",
                 "top_causes": [
@@ -16,16 +18,21 @@ def test_diagnose_minimal(monkeypatch):
                     {"rank": 2, "cause_code": "connection_pool_exhaustion", "title": "连接池问题", "confidence": 0.4, "evidence": ["e2"], "recommended_checks": ["c2"]},
                     {"rank": 3, "cause_code": "release_regression", "title": "发布回归", "confidence": 0.2, "evidence": ["e3"], "recommended_checks": ["c3"]},
                 ],
-                "recommended_action": ["check downstream"]
+                "recommended_action": ["check downstream"],
             }
+            from types import SimpleNamespace
+            from causepilot.models.diagnosis_result import DiagnosisResult
+
+            # return object with `.output` set to a DiagnosisResult instance
+            return SimpleNamespace(output=DiagnosisResult.model_validate(data))
 
     import types
     import causepilot.agent.diagnosis_agent as da
 
-    fake = types.SimpleNamespace(Agent=FakeAgent)
-    # inject fake runtime and mark available before creating service
-    monkeypatch.setattr(da, "pydantic_ai", fake)
-    monkeypatch.setattr(da, "PydanticAI_AVAILABLE", True)
+    # replace the imported Agent symbol in the module
+    monkeypatch.setattr(da, "Agent", FakeAgent)
+    # avoid JSON serialization of datetime in AlertEvent by stubbing prompt builder
+    monkeypatch.setattr(da.DiagnosisAgent, "_build_prompt", lambda self, context: "prompt")
 
     service = DiagnosisService()
 
@@ -34,7 +41,7 @@ def test_diagnose_minimal(monkeypatch):
         def call_tool(self, tool, params):
             return {"summary": "fake"}
 
-    service.mcp = FakeMCP()
+    service.mcp = cast(MCPClient, FakeMCP())
     payload = {
         "title": "checkout-service p95 latency high",
         "severity": "critical",
