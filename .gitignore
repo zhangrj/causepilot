@@ -20,6 +20,3 @@ Dockerfile.local
 
 # pytest
 .pytest_cache
-
-# Documentation
-开发文档.md

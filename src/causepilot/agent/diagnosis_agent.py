@@ -51,7 +51,7 @@ class DiagnosisAgent:
 
         context = {
             "alert": alert.model_dump(),
-            "mcp_server_url": str(settings.CAUSEPILOT_OBSERVE_MCP_SERVER_URL),
+            "mcp_server_url": str(settings.OBSERVE_MCP_SERVER_HTTP_URL),
             "max_tool_calls": settings.CAUSEPILOT_MAX_TOOL_CALLS,
         }
 

@@ -11,7 +11,10 @@ load_dotenv()
 
 
 class Settings(BaseSettings):
-    CAUSEPILOT_OBSERVE_MCP_SERVER_URL: Optional[AnyHttpUrl] = None
+    # MCP server configuration
+    OBSERVE_MCP_SERVER_HTTP_URL: Optional[AnyHttpUrl] = None
+    # optional auth
+    OBSERVE_MCP_BEARER_TOKEN: str | None = None
 
     # LLM configuration (provider/model and credentials)
     CAUSEPILOT_LLM_PROVIDER: str = "mock"
@@ -22,11 +25,10 @@ class Settings(BaseSettings):
 
     # runtime
     CAUSEPILOT_REQUEST_TIMEOUT: int = 10
-    CAUSEPILOT_MAX_TOOL_CALLS: int = 5
-    LOG_LEVEL: str = "INFO"
-
-    # optional MCP auth
-    CAUSEPILOT_MCP_API_KEY: str | None = None
+    CAUSEPILOT_MAX_TOOL_CALLS: int = 20
+    CAUSEPILOT_LOG_LEVEL: str = "INFO"
+    CAUSEPILOT_BIND_HOST: str = "0.0.0.0"
+    CAUSEPILOT_BIND_PORT: int = 8080
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

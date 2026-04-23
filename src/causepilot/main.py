@@ -5,8 +5,9 @@ from pydantic import BaseModel
 from .services.diagnosis_service import DiagnosisService
 import uvicorn
 import logging
+from .config.settings import settings
 
-app = FastAPI(title="CausePilot - Phase1")
+app = FastAPI(title="CausePilot")
 service = DiagnosisService()
 
 
@@ -25,13 +26,18 @@ def diagnose(req: dict):
         raise HTTPException(status_code=400, detail=str(exc))
 
 
-if __name__ == "__main__":
-    uvicorn.run("causepilot.main:app", host="0.0.0.0", port=8000, reload=False)
-
-
 def main() -> None:
     """Console entrypoint for `uv run causepilot`.
 
-    Starts the FastAPI app with uvicorn. Kept minimal for Phase 1.
+    Starts the FastAPI app with uvicorn.
     """
-    uvicorn.run("causepilot.main:app", host="0.0.0.0", port=8000, reload=False)
+    uvicorn.run(
+        "causepilot.main:app",
+        host=settings.CAUSEPILOT_BIND_HOST,
+        port=settings.CAUSEPILOT_BIND_PORT,
+        reload=False,
+    )
+
+
+if __name__ == "__main__":
+    main()

@@ -12,11 +12,11 @@ class MCPClient:
     """Minimal MCP HTTP client wrapper. """
 
     def __init__(self, base_url: str | None = None, timeout: int | None = None):
-        self.base_url = base_url or str(settings.CAUSEPILOT_OBSERVE_MCP_SERVER_URL)
+        self.base_url = base_url or str(settings.OBSERVE_MCP_SERVER_HTTP_URL)
         self.timeout = timeout or settings.CAUSEPILOT_REQUEST_TIMEOUT
         headers = {}
-        if settings.CAUSEPILOT_MCP_API_KEY:
-            headers["Authorization"] = f"Bearer {settings.CAUSEPILOT_MCP_API_KEY}"
+        if settings.OBSERVE_MCP_BEARER_TOKEN:
+            headers["Authorization"] = f"Bearer {settings.OBSERVE_MCP_BEARER_TOKEN}"
         self._client = httpx.Client(timeout=self.timeout, headers=headers)
 
     def call_tool(self, tool: str, params: Dict[str, Any]) -> Dict[str, Any]:

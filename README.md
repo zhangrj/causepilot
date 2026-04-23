@@ -18,7 +18,7 @@ CAUSEPILOT_LLM_MODEL=gpt-4o
 CAUSEPILOT_LLM_API_KEY=your_api_key_here
 CAUSEPILOT_LLM_API_SECRET=your_api_secret_here
 CAUSEPILOT_LLM_ENDPOINT=https://api.openai.com
-CAUSEPILOT_MCP_API_KEY=optional_mcp_api_key
+OBSERVE_MCP_BEARER_TOKEN=optional_mcp_api_key
 ```
 
 Run the minimal API:
