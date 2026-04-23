@@ -39,7 +39,7 @@ class DiagnosisAgent:
 
     def _diagnose_with_pydantic_ai(self, alert: AlertEvent) -> DiagnosisResult:
         context = {
-            "alert": alert.model_dump(),
+            "alert": alert.model_dump(mode='json'),
             "mcp_server_url": str(settings.OBSERVE_MCP_SERVER_HTTP_URL),
             "max_tool_calls": self.max_calls,
         }
